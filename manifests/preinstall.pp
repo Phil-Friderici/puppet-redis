@@ -7,7 +7,7 @@ class redis::preinstall {
   if $::redis::manage_repo {
     case $::operatingsystem {
       'RedHat', 'CentOS', 'Scientific', 'OEL': {
-        if $::operatingsystemrelease < 7 {
+        if versioncmp($::operatingsystemrelease, '7') >= 0 {
           $rpm_url = $::operatingsystemrelease ? {
             /^5/    => "http://download.powerstack.org/5/${::architecture}/",
             /^6/    => "http://download.powerstack.org/6/${::architecture}/",
@@ -30,6 +30,7 @@ class redis::preinstall {
         }
 
         if $::operatingsystemrelease == 7 {
+        if versioncmp($::operatingsystemrelease, '7') >= 0 {
           require ::epel
         }
       }
@@ -55,7 +56,7 @@ class redis::preinstall {
       }
 
       'Debian': {
-        include apt
+        include ::apt
         apt::key { 'dotdeb':
           id      => '89DF5277',
           content => 'http://www.dotdeb.org/dotdeb.gpg',
@@ -70,7 +71,7 @@ class redis::preinstall {
       }
 
       'Ubuntu': {
-        include apt
+        include ::apt
         apt::ppa { $::redis::ppa_repo: }
       }
 
